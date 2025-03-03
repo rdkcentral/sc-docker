@@ -475,7 +475,7 @@ class SCDocker:
     
     def _generate_bash_command(self, command: str, container_name: str, x11: bool) -> str:
         """Generates the bash command to be executed inside the container."""
-        bash_command = f"cd {Path.cwd()}; "
+        bash_command = f"source /usr/local/bin/bashext.sh && cd {Path.cwd()}; "
         if x11 and os.getenv("DISPLAY"):
             bash_command += self._setup_xauth(container_name)
         return bash_command + command
