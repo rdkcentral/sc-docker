@@ -26,14 +26,28 @@ def cli():
 
 @cli.command()
 @click.argument('image')
-@click.argument('command')
+@click.argument('command', nargs=-1, required=False)
 @click.option('-l', '--local', is_flag=True, help='Run a local image.')
 @click.option('-t', '--tag', default='latest', help='Image tag.')
 @click.option('--x11', is_flag=True, help='Forward X11 into the docker.')
 @click.option('-v', '--volume', multiple=True, help='Mount a volume.')
-def run(image, command, local, tag, x11, volume):
+def run(
+        image: str, 
+        command: tuple[str, ...], 
+        local: bool, 
+        tag: str, 
+        x11: bool, 
+        volume: tuple[str, ...]
+    ):
     """Run a docker using its name or its URL and name."""
-    sc_docker.run(image, command, local, tag, x11, volume)
+    sc_docker.run(
+        image_ref=image, 
+        command=command, 
+        local=local, 
+        tag=tag, 
+        x11=x11, 
+        volumes=volume
+    )
 
 @cli.command()
 def list():

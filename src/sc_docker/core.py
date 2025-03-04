@@ -106,7 +106,15 @@ class SCDocker:
             elif image in local_images:
                 click.echo(click.style(image, fg="yellow", bold=True) + local_str)
 
-    def run(self, image_ref: str, command: str, local: bool, tag: str, x11: bool, volumes: list):
+    def run(
+            self, 
+            image_ref: str, 
+            command: tuple[str, ...], 
+            local: bool, 
+            tag: str, 
+            x11: bool, 
+            volumes: tuple[str, ...]
+        ):
         self._check_no_registries(local)
 
         image = self._get_image(image_ref, local)
@@ -123,9 +131,9 @@ class SCDocker:
         
         container_name = self._generate_container_name(image_name)
         
-        docker_args = self._generate_docker_run_args(image, tag, container_name, image_name, x11, volumes, command)
+        docker_command = self._generate_docker_run_command(image, tag, container_name, image_name, x11, volumes, command)
 
-        self._execute_docker_run(docker_args, image)
+        self._execute_docker_run(docker_command, image)
     
     # ──────────────────────── REGISTRY & AUTH HELPERS ────────────────────────
 
@@ -163,7 +171,7 @@ class SCDocker:
     def _validate_images(self, images: list, registry_url: str):
         if not images:
             error_message = f"Registry {registry_url} returned no images! Check URL is correct!"
-            click.secho("ERROR: ", fg="red", bold="true") + click.style(error_message, fg="red")
+            click.secho(f"ERROR: {error_message}", fg="red", bold=True)
             sys.exit(1)
     
     def _get_registry_creds_by_url(self, registry_url: str) -> tuple[str, str]:
@@ -416,7 +424,7 @@ class SCDocker:
             click.secho(e)
             sys.exit(1)
     
-    def _handle_invalid_tag(self, image:str, tag: str, tags: list):
+    def _handle_invalid_tag(self, image:str, tag: str, tags: tuple[str, ...]):
         click.echo(
             click.style("ERROR: ", fg="red", bold = True) +
             click.style(f"Expected tag '{tag}' not found for image '{image}'", fg="red")
@@ -455,8 +463,17 @@ class SCDocker:
 
     # ──────────────────────── DOCKER RUN HELPERS ────────────────────────
 
-    def _generate_docker_run_args(self, image: str, tag: str, container_name: str, image_name: str, x11: bool, volumes: list, command: str) -> list:
-        """Generates the full docker run command arguments."""
+    def _generate_docker_run_command(
+            self, 
+            image: str, 
+            tag: str, 
+            container_name: str, 
+            image_name: str, 
+            x11: bool, 
+            volumes: tuple[str, ...], 
+            command: tuple[str, ...]
+        ) -> list:
+        """Generates the full docker run command."""
         docker_args = ['docker', 'run', '--rm']
 
         docker_args += ['--net=host']
@@ -473,20 +490,25 @@ class SCDocker:
         docker_args += [f"{image}:{tag}", self._generate_bash_command(command, container_name, x11)]
         return docker_args
     
-    def _generate_bash_command(self, command: str, container_name: str, x11: bool) -> str:
+    def _generate_bash_command(
+            self, 
+            command: tuple[str, ...], 
+            container_name: str, 
+            x11: bool
+        ) -> str:
         """Generates the bash command to be executed inside the container."""
-        bash_command = f"cd {Path.cwd()}; "
+        bash_command = f"source /usr/local/bin/bashext.sh && cd {Path.cwd()}; "
         if x11 and os.getenv("DISPLAY"):
             bash_command += self._setup_xauth(container_name)
-        return bash_command + command
+        return bash_command + " ".join(command)
     
-    def _execute_docker_run(self, docker_args: list, image: str):
+    def _execute_docker_run(self, docker_command: list, image: str):
         """Prints and executes the docker run command."""
-        docker_args_str = " ".join(docker_args)
+        docker_command_str = " ".join(docker_command)
         click.secho(f"Running docker [{image}]", fg='green')
-        click.secho(docker_args_str, fg='green')
+        click.secho(docker_command_str, fg='green')
         click.echo()
-        os.execvp('docker', docker_args)
+        os.execvp('docker', docker_command)
 
     def _get_architecture_flag(self, image: str) -> list:
         architecture = image.split("_")[-1]
@@ -496,7 +518,7 @@ class SCDocker:
             return ['--platform', 'linux/amd64']
         return []
 
-    def _add_volume_mounts(self, volumes: list) -> list:
+    def _add_volume_mounts(self, volumes: tuple[str, ...]) -> list:
         docker_args = []
         for volume in volumes:
             self._validate_docker_mount(volume)
