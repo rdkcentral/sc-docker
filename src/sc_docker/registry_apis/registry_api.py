@@ -14,11 +14,11 @@
 
 from abc import ABC, abstractmethod
 
+import requests
+
 class RegistryAPI(ABC):
-    def name(self):
-        name = self.__class__.__name__
-        return getattr(self, "api_name", (name[:-3] if name.endswith("API") else name).lower())
-    
+    reg_type = "NotImplemented"
+
     @abstractmethod
     def fetch_images(self, registry, username, token) -> tuple[str, ...]:
         raise NotImplementedError
@@ -26,3 +26,27 @@ class RegistryAPI(ABC):
     @abstractmethod
     def fetch_tags(self, registry, username, token, container_name) -> tuple[str, ...]:
         raise NotImplementedError
+
+    class RegistryAPIException(RuntimeError):
+        def __init__(
+                self, 
+                registry_type: str,
+                registry_url: str,
+                response: requests.Response | None = None,
+                message: str | None = None
+            ):
+            if response:
+                try:
+                    error_details = response.json()
+                except ValueError:
+                    error_details = response.text
+                error_message = (
+                    f"{registry_type} API {registry_url} error {response.status_code}: "
+                    f"{error_details}"
+                )
+            elif message:
+                error_message = f"{registry_type} API {registry_url} error: {message}"
+            else:
+                error_message = f"{registry_type} API {registry_url} error occured"
+            
+            super().__init__(error_message)
