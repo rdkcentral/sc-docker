@@ -18,8 +18,6 @@ import click
 
 from .core import SCDocker
 
-sc_docker = SCDocker()
-
 @click.group()
 def cli():
     pass
@@ -40,7 +38,7 @@ def run(
         volume: tuple[str, ...]
     ):
     """Run a docker using its name or its URL and name."""
-    sc_docker.run(
+    SCDocker().run(
         image_ref=image, 
         command=command, 
         local=local, 
@@ -52,18 +50,18 @@ def run(
 @cli.command()
 def list():
     """List local and remote containers."""
-    sc_docker.list_images()
+    SCDocker().list_images()
 
 @cli.command()
 def login():
     """Login to a docker registry."""
-    sc_docker.login()
+    SCDocker().login()
 
 @cli.command()
 @click.argument('registry_url')
 def logout(registry_url):
     """Logout of a docker registry."""
-    sc_docker.logout(registry_url)
+    SCDocker().logout(registry_url)
 
 if __name__ == "__main__":
     cli()
