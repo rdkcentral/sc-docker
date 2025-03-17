@@ -14,13 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import subprocess
+import sys
+
 import click
 
 from .core import SCDocker
 
 @click.group()
 def cli():
-    pass
+    """Run and manage dockers."""
+    _validate_docker()
 
 @cli.command()
 @click.argument('image')
@@ -62,6 +66,20 @@ def login():
 def logout(registry_url):
     """Logout of a docker registry."""
     SCDocker().logout(registry_url)
+
+def _validate_docker():
+    try:
+        subprocess.run(["docker", "--version"], capture_output=True, check=True)
+    except FileNotFoundError:
+        click.secho("ERROR: Docker not installed or not in path!", fg="red")
+        sys.exit(1)
+
+    try:
+        subprocess.run(["docker", "ps"], capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        click.secho(f"ERROR: Docker failed: {e}", fg="red")
+        click.secho(f"You likely don't have access to the docker daemon!", fg="red")
+        sys.exit(1)
 
 if __name__ == "__main__":
     cli()
