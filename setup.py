@@ -20,6 +20,7 @@ def read_version():
 
 setup(
     name='sc-docker',
+    python_requires=">=3.10",
     version=read_version(),
     author="RDK Management",
     description="An SC tool for finding and uniformly running docker images.",
