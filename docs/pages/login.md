@@ -31,7 +31,7 @@ Note: Artifactory will transition to using Personal Access Tokens in Q4 2024. We
 ## Example .netrc file
 
 ```
-machine partners.artifactory.com 
+machine example.artifactory.com 
 login <Your Username>
 password <Your API Key> 
 
