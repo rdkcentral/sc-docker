@@ -23,8 +23,6 @@ The sc docker module allows users to run docker containers in a standardised man
     * Installation instructions can be found [here](https://docs.docker.com/engine/install/)
 * Access to the docker engine
     * Access to the docker engine, could require privileged permissions, on linux it requires the user to be part of the docker group. See installation instructions above for more about this.
-* Install SC 
-    * `pip install git+https://github.com/rdkcentral/sc.git@main`
 
 ## Installation
 
