@@ -35,5 +35,5 @@ setup(
         'docker==7.1.0',
         'pyyaml==6.0.2',
         'sc @ git+https://github.com/rdkcentral/sc.git@main'
-    ],
+    ]
 )
