@@ -34,6 +34,6 @@ setup(
         'requests==2.31.0', # Docker SDK breaks on 2.32.0
         'docker==7.1.0',
         'pyyaml==6.0.2',
-        'git+https://github.com/rdkcentral/sc.git@main'
+        'sc @ git+https://github.com/rdkcentral/sc.git@main'
     ]
 )
