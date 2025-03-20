@@ -17,6 +17,8 @@ import requests
 from .registry_api import RegistryAPI
 
 class ArtifactoryAPI(RegistryAPI):
+    reg_type = "Artifactory"
+
     def fetch_images(self, registry, username, token) -> tuple[str, ...]:
         artifactory_root, repo = registry.split('/', 1)
         if not username:
@@ -29,7 +31,7 @@ class ArtifactoryAPI(RegistryAPI):
             data = response.json()
             return tuple(data.get('repositories', ()))
         else:
-            raise RuntimeError(f"Artifactory API error {response.status_code}: {response.text}")
+            raise self.RegistryAPIException(self.reg_type, registry, response = response)
 
     def fetch_tags(self, registry, username, token, container_name) -> tuple[str, ...]:
         artifactory_root, repo = registry.split('/', 1)
@@ -43,4 +45,4 @@ class ArtifactoryAPI(RegistryAPI):
             data = response.json()
             return tuple(data.get('tags', ()))
         else:
-            raise RuntimeError(f"Artifactory API error {response.status_code}: {response.text}")
+            raise self.RegistryAPIException(self.reg_type, registry, response = response)

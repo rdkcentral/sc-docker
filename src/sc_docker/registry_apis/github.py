@@ -17,6 +17,7 @@ import requests
 from .registry_api import RegistryAPI
 
 class GithubAPI(RegistryAPI):
+    reg_type = "Github"
     _BASE_URL: str = "https://api.github.com"
 
     def fetch_images(self, registry, username, token) -> tuple[str, ...]:
@@ -37,7 +38,7 @@ class GithubAPI(RegistryAPI):
                 link_header = response.headers.get('Link', '')
                 url = response.links.get('next', {}).get('url')
             else:
-                raise RuntimeError(f"GitHub API returned an error: {response.status_code} - {response.text}")
+                raise self.RegistryAPIException(self.reg_type, registry, response = response)
         
         return tuple(containers)
 
@@ -61,7 +62,7 @@ class GithubAPI(RegistryAPI):
                 link_header = response.headers.get('Link', '')
                 url = response.links.get('next', {}).get('url')
             else:
-                raise RuntimeError(f"GitHub API returned an error: {response.status_code} - {response.text}")
+                raise self.RegistryAPIException(self.reg_type, registry, response = response)
         
         # Flatten the list of tags (since each version may have multiple tags)
         return tuple(tag for sublist in tags for tag in sublist)
