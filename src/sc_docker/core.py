@@ -14,7 +14,7 @@
 
 import getpass
 import grp
-from netrc import netrc
+from netrc import netrc, NetrcParseError
 import os
 from pathlib import Path
 import subprocess
@@ -200,9 +200,10 @@ class SCDocker:
                 sys.exit(1)
             username, _, api_token = auth
             return username, api_token
-        except Exception as e:
+        except NetrcParseError as e:
             click.secho("ERROR: Failed to grab credentials from your .netrc", fg="red")
             click.secho(f"Error message: {e}")
+            click.secho("You may have to run command: chmod 600 ~/.netrc")
             sys.exit(1)
     
     def _attempt_docker_login(self, username: str, api_token: str, registry_url: str):

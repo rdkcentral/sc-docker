@@ -20,6 +20,7 @@ def read_version():
 
 setup(
     name='sc-docker',
+    python_requires=">=3.10",
     version=read_version(),
     author="RDK Management",
     description="An SC tool for finding and uniformly running docker images.",
@@ -33,5 +34,6 @@ setup(
         'requests==2.31.0', # Docker SDK breaks on 2.32.0
         'docker==7.1.0',
         'pyyaml==6.0.2',
+        'sc @ git+https://github.com/rdkcentral/sc.git@main'
     ]
 )
