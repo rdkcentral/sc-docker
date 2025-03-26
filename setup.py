@@ -32,8 +32,8 @@ setup(
     install_requires=[
         'Click',
         'requests==2.31.0', # Docker SDK breaks on 2.32.0
-        'docker==7.1.0',
-        'pyyaml==6.0.2',
+        'docker~=7.0',
+        'pyyaml~=6.0',
         'sc @ git+https://github.com/rdkcentral/sc.git@main'
     ]
 )
