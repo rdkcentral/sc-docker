@@ -23,10 +23,16 @@ from .core import SCDocker
 
 @click.group()
 def cli():
+    # Putting functionality in here will do nothing as sc entrypoint now
+    # loads groups and commands under this group directly bypassing it.
+    pass
+
+@cli.group()
+def docker():
     """Run and manage dockers."""
     _validate_docker()
 
-@cli.command()
+@docker.command()
 @click.argument('image')
 @click.argument('command', nargs=-1, required=False)
 @click.option('-l', '--local', is_flag=True, help='Run a local image.')
@@ -51,17 +57,17 @@ def run(
         volumes=volume
     )
 
-@cli.command()
+@docker.command()
 def list():
     """List local and remote containers."""
     SCDocker().list_images()
 
-@cli.command()
+@docker.command()
 def login():
     """Login to a docker registry."""
     SCDocker().login()
 
-@cli.command()
+@docker.command()
 @click.argument('registry_url')
 def logout(registry_url):
     """Logout of a docker registry."""
