@@ -27,9 +27,8 @@ from docker.errors import APIError, TLSParameterError
 
 from .config_manager import ConfigManager
 from .registry_apis.registry_api_factory import RegistryAPIFactory
+from sc.config_manager import ConfigManager
 
-USER_CONFIG = Path(os.getenv("SC_USER_CONFIG", f"{Path.home()}/.sc_config/config.yaml"))
-ADMIN_CONFIG = Path("/etc/sc/config.yaml")
 REGISTRY_WHITELIST = Path("/etc/sc/docker_registry_whitelist")
 
 STANDARD_MOUNT_DIRS = ['/home/mirror', '/opt/repo_flow']
@@ -45,7 +44,7 @@ class SCDocker:
         self.supported_registry_types = RegistryAPIFactory.get_supported_registry_types()
 
 
-        self.docker_config_manager = ConfigManager(USER_CONFIG, ADMIN_CONFIG, 'docker')
+        self.docker_config_manager = ConfigManager('docker')
         self.docker_config = self.docker_config_manager.get_config()
 
         self.whitelisted_registries = self._get_whitelisted_registries()
