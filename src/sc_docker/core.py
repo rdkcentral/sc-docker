@@ -25,7 +25,6 @@ import click
 import docker
 from docker.errors import APIError, TLSParameterError
 
-from .config_manager import ConfigManager
 from .registry_apis.registry_api_factory import RegistryAPIFactory
 from sc.config_manager import ConfigManager
 
