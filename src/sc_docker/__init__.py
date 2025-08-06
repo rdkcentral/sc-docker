@@ -1,1 +1,3 @@
-from .cli import cli
+from .docker_plugin import DockerPlugin
+
+plugin = DockerPlugin()

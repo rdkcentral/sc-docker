@@ -20,7 +20,7 @@ import sys
 import click
 
 from .core import SCDocker
-
+    
 @click.group()
 def cli():
     # Putting functionality in here will do nothing as sc entrypoint now
@@ -86,6 +86,3 @@ def _validate_docker():
         click.secho(f"ERROR: Docker failed: {e}", fg="red")
         click.secho(f"You likely don't have access to the docker daemon!", fg="red")
         sys.exit(1)
-
-if __name__ == "__main__":
-    cli()

@@ -35,5 +35,10 @@ setup(
         'docker~=7.0',
         'pyyaml~=6.0',
         'sc @ git+https://github.com/rdkcentral/sc.git@main'
-    ]
+    ],
+    entry_points={
+        'sc.plugins': [
+            'sc_docker = sc_docker.plugin:DockerPlugin'
+        ]
+    }
 )
