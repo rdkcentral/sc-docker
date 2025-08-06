@@ -455,9 +455,17 @@ class SCDocker:
     
     def _parse_image_reference(self, image: str) -> tuple[str, str]:
         """Split image reference into registry url and image name"""
-        last_slash = image.rfind("/")
-        registry_url = image[:last_slash]
-        image_name = image[last_slash+1:]
+        registry_url = None
+        for url in self.docker_config:
+            if image.startswith(url):
+                registry_url = url
+                image_name = image.replace(f"{url}/", "", 1)
+                break 
+        
+        if registry_url == None:
+            last_slash = image.rfind("/")
+            registry_url = image[:last_slash]
+            image_name = image[last_slash+1:]
         return registry_url, image_name
 
     # ──────────────────────── DOCKER RUN HELPERS ────────────────────────
